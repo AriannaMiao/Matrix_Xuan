@@ -5,13 +5,15 @@
 using namespace std;
 
 class Matrix{
+	friend class Vector;
+	
 	friend ostream &operator<<(ostream &os, const Matrix& obj)
 	{
 		os << obj.numrow << " " << obj.numcol << "\n";
 		for ( int i = 0; i < obj.numrow; ++i)
 		{
 			for ( int j = 0; j < obj.numcol; ++j)
-				os << obj.number[i][j] << " ";
+				os << obj.row[i].column[j] << " ";
 			os << "\n";
 		}
 		os << endl;
@@ -22,12 +24,12 @@ class Matrix{
 	{
 		is >> obj.numrow;
 		is >> obj.numcol;
-		obj.number = new int *[obj.numrow];
+		obj.row = new Vector *[obj.numrow];
 		for ( int i = 0; i < obj.numrow; ++i)
-			obj.number[i] = new int [obj.numcol];
+			obj.row[i].column = new int [obj.numcol];
 		for ( int i = 0; i < obj.numrow; ++i)
 			for ( int j = 0; j < obj.numcol; ++j)
-				is >> obj.number[i][j];
+				is >> obj.row[i].column[j];
 		return is;
 	}
 	
@@ -36,7 +38,7 @@ class Matrix{
 		Matrix tmp(m1.numrow, m1.numrow);
 		for ( int i = 0; i < m1.numrow; ++i)
 			for ( int j = 0; j < m1.numcol; ++j)
-				tmp.number[i][j] = m1.number[i][j] + m2.number[i][j];
+				tmp.row[i].column[j] = m1.row[i].column[j] + m2.row[i].column[j];
 		return tmp;
 	}
 	
@@ -46,7 +48,7 @@ class Matrix{
 			return false;
 		for ( int i = 0; i < obj1.numrow; ++i)
 			for ( int j = 0; j < obj1.numcol; ++j)
-				if ( obj1.number[i][j] != obj2.number[i][j] )
+				if ( obj1.row[i].column[j] != obj2.row[i].column[j] )
 					return false;
 		return true;
 	}
@@ -54,33 +56,44 @@ class Matrix{
 private:
 	int numrow;
 	int numcol;
-	int **number;
 
-public:
+	class  Vector{
+	public:
+		int *column;
+
+		~Vector()
+		{
+			delete [] column;
+		}
+	};
+	
+	Vector *row;
+	
+public:	
 	Matrix(int nr, int nc): numrow(nr), numcol(nc)
 	{
-		number = new int *[numrow];
+		row = new Vector *[numrow];
 		for ( int i = 0; i < numrow; ++i)
-			number[i] = new int [numcol];
+			row[i].column = new int [numcol];
 	}
 	
 	Matrix()
 	{
 		numrow = 0;
 		numcol = 0;
-		number = NULL;
+		row = NULL;
 	}
 	
 	Matrix(const Matrix &mat)
 	{
 		numrow = mat.numrow;
 		numcol = mat.numcol;
-		number = new int *[numrow];
+		row = new Vector *[numrow];
 		for ( int i = 0; i < numrow; ++i)
-			number[i] = new int [numcol];
+			row[i].column = new int [numcol];
 		for ( int i = 0; i < numrow; ++i)
 			for ( int j = 0; j < numcol; ++j)
-				number[i][j] = mat.number[i][j];
+				row[i].column[j] = mat.row[i].column[j];
 	}
 	
 	int nRow()
@@ -97,15 +110,17 @@ public:
 	{
 		if ( this == &right )
 			return *this;
-		delete [] number;
+		for ( int i = 0; i <= numrow; ++i)
+			delete [] row[i].column;
+		delete [] row;
 		numrow = right.numrow;
 		numcol = right.numcol;
-		number = new int *[numrow];
+		row = new Vector *[numrow];
 		for ( int i = 0; i < numrow; ++i)
-			number[i] = new int [numcol];
+			row[i].column = new int [numcol];
 		for ( int i = 0; i < numrow; ++i)
 			for ( int j = 0; j < numcol; ++j)
-				number[i][j] = right.number[i][j];
+				row[i].column[j] = right.row[i].column[j];
 		return *this;
 	}
 	
@@ -113,13 +128,15 @@ public:
 	{
 		for ( int i = 0; i < numrow; ++i)
 			for ( int j = 0; j < numcol; ++j)
-				number[i][j] = number[i][j] + right.number[i][j];
+				row[i].column[j] = row[i].column[j] + right.row[i].column[j];
 		return *this;
 	}
 	
 	~Matrix()
 	{
-		delete [] number;
+		for ( int i = 0; i <= numrow; ++i)
+			delete [] row[i].column;
+		delete [] row;
 	}
 };
 
