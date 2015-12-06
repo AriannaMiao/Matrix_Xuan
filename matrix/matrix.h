@@ -64,6 +64,7 @@ private:
 
 		int &operator[](int index)
 		{
+			if ( index > num )
 			{
 			//	cout << "false";
 				exit(-1);
@@ -113,12 +114,12 @@ public:
 				row[i].column[j] = mat.row[i].column[j];
 	}
 	
-	int nRow()
+	int nRow() const
 	{
 		return numrow;
 	}
 	
-	int nCol()
+	int nCol() const
 	{
 		return numcol;
 	}
@@ -169,7 +170,14 @@ public:
 		return row[index - 1];
 	}
 	
-	int operator() (int a, int b)
+	int &operator()(int a, int b)
+	{
+		if ( a > numrow || b > numcol )
+			exit(-1);
+		return row[a-1].column[b-1];
+	}
+	
+	const int &operator()(int a, int b) const
 	{
 		if ( a > numrow || b > numcol )
 			exit(-1);
