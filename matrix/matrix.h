@@ -24,7 +24,7 @@ class Matrix{
 	{
 		is >> obj.numrow;
 		is >> obj.numcol;
-		obj.row = new Vector *[obj.numrow];
+		obj.row = new Vector [obj.numrow];
 		for ( int i = 0; i < obj.numrow; ++i)
 			obj.row[i].column = new int [obj.numcol];
 		for ( int i = 0; i < obj.numrow; ++i)
@@ -60,6 +60,23 @@ private:
 	class  Vector{
 	public:
 		int *column;
+		int num;
+
+		int &operator[](int index)
+		{
+			{
+			//	cout << "false";
+				exit(-1);
+			}
+			return column[index - 1];
+		}
+		
+		const int &operator[](int index) const
+		{
+			if ( index > num )
+				exit(-1);
+			return column[index - 1];
+		}
 
 		~Vector()
 		{
@@ -72,7 +89,7 @@ private:
 public:	
 	Matrix(int nr, int nc): numrow(nr), numcol(nc)
 	{
-		row = new Vector *[numrow];
+		row = new Vector [numrow];
 		for ( int i = 0; i < numrow; ++i)
 			row[i].column = new int [numcol];
 	}
@@ -88,7 +105,7 @@ public:
 	{
 		numrow = mat.numrow;
 		numcol = mat.numcol;
-		row = new Vector *[numrow];
+		row = new Vector [numrow];
 		for ( int i = 0; i < numrow; ++i)
 			row[i].column = new int [numcol];
 		for ( int i = 0; i < numrow; ++i)
@@ -110,12 +127,10 @@ public:
 	{
 		if ( this == &right )
 			return *this;
-		for ( int i = 0; i <= numrow; ++i)
-			delete [] row[i].column;
 		delete [] row;
 		numrow = right.numrow;
 		numcol = right.numcol;
-		row = new Vector *[numrow];
+		row = new Vector [numrow];
 		for ( int i = 0; i < numrow; ++i)
 			row[i].column = new int [numcol];
 		for ( int i = 0; i < numrow; ++i)
@@ -132,10 +147,37 @@ public:
 		return *this;
 	}
 	
+	Vector &operator[](int index)
+	{
+		if ( index > numrow ) 
+		{
+			//cout << "false";
+			exit(-1);
+		}
+		row[index - 1].num = numcol;
+		return row[index - 1];
+	}
+	
+	const Vector &operator[](int index) const
+	{
+		if ( index > numrow )
+		{
+			//cout << "false";
+			exit(-1);
+		}
+		row[index - 1].num = numcol;
+		return row[index - 1];
+	}
+	
+	int operator() (int a, int b)
+	{
+		if ( a > numrow || b > numcol )
+			exit(-1);
+		return row[a-1].column[b-1];
+	}
+	
 	~Matrix()
 	{
-		for ( int i = 0; i <= numrow; ++i)
-			delete [] row[i].column;
 		delete [] row;
 	}
 };
