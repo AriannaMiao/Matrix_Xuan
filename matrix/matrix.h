@@ -35,7 +35,7 @@ class Matrix{
 	
 	friend Matrix operator+(const Matrix &m1, const Matrix &m2)
 	{
-		Matrix tmp(m1.numrow, m1.numrow);
+		Matrix tmp(m1.numrow, m1.numcol);
 		for ( int i = 0; i < m1.numrow; ++i)
 			for ( int j = 0; j < m1.numcol; ++j)
 				tmp.row[i].column[j] = m1.row[i].column[j] + m2.row[i].column[j];
@@ -64,18 +64,15 @@ private:
 
 		int &operator[](int index)
 		{
-			if ( index > num )
-			{
-			//	cout << "false";
-				exit(-1);
-			}
+			if ( index > num || index < 1 )
+				throw"IndexOutOfBound";
 			return column[index - 1];
 		}
 		
 		const int &operator[](int index) const
 		{
-			if ( index > num )
-				exit(-1);
+			if ( index > num || index < 1 )
+				throw"IndexOutOfBound";
 			return column[index - 1];
 		}
 
@@ -150,37 +147,31 @@ public:
 	
 	Vector &operator[](int index)
 	{
-		if ( index > numrow ) 
-		{
-			//cout << "false";
-			exit(-1);
-		}
+		if ( index > numrow || index < 1 ) 
+			throw"IndexOutOfBound";
 		row[index - 1].num = numcol;
 		return row[index - 1];
 	}
 	
 	const Vector &operator[](int index) const
 	{
-		if ( index > numrow )
-		{
-			//cout << "false";
-			exit(-1);
-		}
+		if ( index > numrow || index < 1 ) 
+			throw"IndexOutOfBound";
 		row[index - 1].num = numcol;
 		return row[index - 1];
 	}
 	
 	int &operator()(int a, int b)
 	{
-		if ( a > numrow || b > numcol )
-			exit(-1);
+		if ( a > numrow || b > numcol || a < 1 || b < 1 )
+			throw"IndexOutOfBound";
 		return row[a-1].column[b-1];
 	}
 	
 	const int &operator()(int a, int b) const
 	{
-		if ( a > numrow || b > numcol )
-			exit(-1);
+		if ( a > numrow || b > numcol || a < 1 || b < 1 )
+			throw"IndexOutOfBound";
 		return row[a-1].column[b-1];
 	}
 	
